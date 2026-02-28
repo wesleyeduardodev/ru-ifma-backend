@@ -4,14 +4,17 @@ import br.edu.ifma.ru.dto.request.AdminRequest;
 import br.edu.ifma.ru.dto.response.AdminResponse;
 import br.edu.ifma.ru.service.AdministradorService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
+@Validated
 public class AdminController {
 
     private final AdministradorService service;
@@ -26,7 +29,7 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdminResponse> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<AdminResponse> buscarPorId(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
@@ -37,12 +40,12 @@ public class AdminController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdminResponse> atualizar(@PathVariable Long id, @Valid @RequestBody AdminRequest request) {
+    public ResponseEntity<AdminResponse> atualizar(@PathVariable @Positive Long id, @Valid @RequestBody AdminRequest request) {
         return ResponseEntity.ok(service.atualizar(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable @Positive Long id) {
         service.deletar(id);
         return ResponseEntity.noContent().build();
     }

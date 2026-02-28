@@ -27,7 +27,7 @@ public class CardapioService {
 
     public CardapioResponse buscarPorId(Long id) {
         Cardapio cardapio = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cardápio não encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cardapio nao encontrado"));
         return CardapioResponse.fromEntity(cardapio);
     }
 
@@ -46,7 +46,7 @@ public class CardapioService {
 
     public CardapioResponse atualizar(Long id, CardapioRequest request) {
         Cardapio cardapio = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cardápio não encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cardapio nao encontrado"));
         cardapio.setData(request.data());
         cardapio.setTipoRefeicao(request.tipoRefeicao());
         cardapio.setPratoPrincipal(request.pratoPrincipal());
@@ -60,7 +60,7 @@ public class CardapioService {
 
     public void deletar(Long id) {
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Cardápio não encontrado com id: " + id);
+            throw new ResourceNotFoundException("Cardapio nao encontrado");
         }
         repository.deleteById(id);
     }

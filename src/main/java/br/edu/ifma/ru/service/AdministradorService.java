@@ -29,7 +29,7 @@ public class AdministradorService {
 
     public AdminResponse buscarPorId(Long id) {
         Administrador admin = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador nao encontrado"));
         return AdminResponse.fromEntity(admin);
     }
 
@@ -44,7 +44,7 @@ public class AdministradorService {
 
     public AdminResponse atualizar(Long id, AdminRequest request) {
         Administrador admin = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador nao encontrado"));
         admin.setNome(request.nome());
         admin.setEmail(request.email());
         admin.setSenha(passwordEncoder.encode(request.senha()));
@@ -54,7 +54,7 @@ public class AdministradorService {
 
     public void deletar(Long id) {
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Administrador não encontrado com id: " + id);
+            throw new ResourceNotFoundException("Administrador nao encontrado");
         }
         repository.deleteById(id);
     }

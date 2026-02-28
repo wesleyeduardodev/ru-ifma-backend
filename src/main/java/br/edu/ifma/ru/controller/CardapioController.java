@@ -4,8 +4,10 @@ import br.edu.ifma.ru.dto.request.CardapioRequest;
 import br.edu.ifma.ru.dto.response.CardapioResponse;
 import br.edu.ifma.ru.service.CardapioService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -13,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cardapios")
+@Validated
 public class CardapioController {
 
     private final CardapioService service;
@@ -27,7 +30,7 @@ public class CardapioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CardapioResponse> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<CardapioResponse> buscarPorId(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
@@ -38,12 +41,12 @@ public class CardapioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CardapioResponse> atualizar(@PathVariable Long id, @Valid @RequestBody CardapioRequest request) {
+    public ResponseEntity<CardapioResponse> atualizar(@PathVariable @Positive Long id, @Valid @RequestBody CardapioRequest request) {
         return ResponseEntity.ok(service.atualizar(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable @Positive Long id) {
         service.deletar(id);
         return ResponseEntity.noContent().build();
     }
