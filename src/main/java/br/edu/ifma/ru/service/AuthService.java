@@ -1,5 +1,6 @@
 package br.edu.ifma.ru.service;
 
+import br.edu.ifma.ru.dto.request.AlterarSenhaRequest;
 import br.edu.ifma.ru.dto.request.LoginRequest;
 import br.edu.ifma.ru.dto.response.AdminResponse;
 import br.edu.ifma.ru.dto.response.LoginResponse;
@@ -43,5 +44,17 @@ public class AuthService {
         Administrador admin = repository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Administrador nao encontrado"));
         return AdminResponse.fromEntity(admin);
+    }
+
+    public void alterarSenha(String email, AlterarSenhaRequest request) {
+        Administrador admin = repository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador nao encontrado"));
+
+        if (!passwordEncoder.matches(request.senhaAtual(), admin.getSenha())) {
+            throw new IllegalStateException("Senha atual incorreta");
+        }
+
+        admin.setSenha(passwordEncoder.encode(request.novaSenha()));
+        repository.save(admin);
     }
 }

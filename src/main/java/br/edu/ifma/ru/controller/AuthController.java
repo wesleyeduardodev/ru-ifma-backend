@@ -1,5 +1,6 @@
 package br.edu.ifma.ru.controller;
 
+import br.edu.ifma.ru.dto.request.AlterarSenhaRequest;
 import br.edu.ifma.ru.dto.request.LoginRequest;
 import br.edu.ifma.ru.dto.response.AdminResponse;
 import br.edu.ifma.ru.dto.response.LoginResponse;
@@ -35,5 +36,12 @@ public class AuthController {
     public ResponseEntity<AdminResponse> me(Authentication authentication) {
         AdminResponse admin = authService.buscarPorEmail(authentication.getName());
         return ResponseEntity.ok(admin);
+    }
+
+    @PutMapping("/alterar-senha")
+    public ResponseEntity<Void> alterarSenha(@Valid @RequestBody AlterarSenhaRequest request,
+                                             Authentication authentication) {
+        authService.alterarSenha(authentication.getName(), request);
+        return ResponseEntity.noContent().build();
     }
 }
