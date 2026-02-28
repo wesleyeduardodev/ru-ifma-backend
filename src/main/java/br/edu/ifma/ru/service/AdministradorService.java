@@ -52,10 +52,20 @@ public class AdministradorService {
         return AdminResponse.fromEntity(salvo);
     }
 
+    private static final String EMAIL_ADMIN_PRINCIPAL = "admin@ifma.edu.br";
+
     public void deletar(Long id) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Administrador nao encontrado");
+        Administrador admin = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador nao encontrado"));
+
+        if (EMAIL_ADMIN_PRINCIPAL.equals(admin.getEmail())) {
+            throw new IllegalStateException("O administrador principal nao pode ser excluido");
         }
+
+        if (repository.count() <= 1) {
+            throw new IllegalStateException("O sistema deve ter pelo menos um administrador");
+        }
+
         repository.deleteById(id);
     }
 }
