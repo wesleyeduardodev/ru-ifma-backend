@@ -1,6 +1,6 @@
 package br.edu.ifma.ru.dto.response;
 
 public record LoginResponse(
-    String mensagem,
+    String accessToken,
     AdminResponse admin
 ) {}

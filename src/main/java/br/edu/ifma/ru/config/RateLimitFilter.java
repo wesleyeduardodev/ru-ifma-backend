@@ -18,9 +18,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RateLimitFilter extends OncePerRequestFilter {
 
     private final Map<String, RequestInfo> loginRequests = new ConcurrentHashMap<>();
+    private final Map<String, RequestInfo> refreshRequests = new ConcurrentHashMap<>();
     private final Map<String, RequestInfo> generalRequests = new ConcurrentHashMap<>();
 
-    private static final int LOGIN_LIMIT = 5;
+    private static final int LOGIN_LIMIT = 10;
+    private static final int REFRESH_LIMIT = 30;
     private static final int GENERAL_LIMIT = 60;
     private static final long WINDOW_MS = 60_000;
 
@@ -30,18 +32,28 @@ public class RateLimitFilter extends OncePerRequestFilter {
         String clientIp = request.getRemoteAddr();
         String path = request.getRequestURI();
 
-        if (path.equals("/api/auth/login") && "POST".equalsIgnoreCase(request.getMethod())) {
+        boolean isLogin = path.equals("/api/auth/login") && "POST".equalsIgnoreCase(request.getMethod());
+        boolean isRefresh = path.equals("/api/auth/refresh") && "POST".equalsIgnoreCase(request.getMethod());
+
+        if (isLogin) {
             if (excedeuLimite(loginRequests, clientIp, LOGIN_LIMIT)) {
                 response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
                 response.setContentType("application/json");
                 response.getWriter().write("{\"erro\":\"Muitas tentativas de login. Tente novamente em 1 minuto.\"}");
                 return;
             }
+        } else if (isRefresh) {
+            if (excedeuLimite(refreshRequests, clientIp, REFRESH_LIMIT)) {
+                response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+                response.setContentType("application/json");
+                response.getWriter().write("{\"erro\":\"Muitas tentativas. Tente novamente em 1 minuto.\"}");
+                return;
+            }
         } else if (path.startsWith("/api/")) {
             if (excedeuLimite(generalRequests, clientIp, GENERAL_LIMIT)) {
                 response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
                 response.setContentType("application/json");
-                response.getWriter().write("{\"erro\":\"Limite de requisicoes excedido. Tente novamente em breve.\"}");
+                response.getWriter().write("{\"erro\":\"Limite de requisições excedido. Tente novamente em breve.\"}");
                 return;
             }
         }
@@ -65,6 +77,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
     public void limparEntradasExpiradas() {
         long agora = System.currentTimeMillis();
         loginRequests.entrySet().removeIf(entry -> agora - entry.getValue().windowStart > WINDOW_MS);
+        refreshRequests.entrySet().removeIf(entry -> agora - entry.getValue().windowStart > WINDOW_MS);
         generalRequests.entrySet().removeIf(entry -> agora - entry.getValue().windowStart > WINDOW_MS);
     }
 

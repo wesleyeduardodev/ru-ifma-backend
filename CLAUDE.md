@@ -2,7 +2,7 @@
 
 ## Stack
 
-Java 21, Spring Boot 3.4.3, Spring Security, Spring Data JPA, PostgreSQL 17
+Java 21, Spring Boot 3.4.3, Spring Security, Spring Data JPA, PostgreSQL 17, JJWT 0.12.6
 
 ## Como rodar
 
@@ -22,6 +22,7 @@ Banco local: `ru_ifma` / user: `postgres` / pass: `postgres` (configurado no pro
 | `DB_PASSWORD` | Senha do banco | Sim |
 | `SPRING_PROFILES_ACTIVE` | Profile ativo (`dev` ou `prod`) | Sim |
 | `CORS_ORIGINS` | Origens CORS separadas por virgula | Sim |
+| `JWT_SECRET` | Chave secreta JWT (base64 encoded) | Sim |
 
 ## Profiles
 
